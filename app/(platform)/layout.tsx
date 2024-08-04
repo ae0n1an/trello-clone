@@ -3,8 +3,8 @@ import {
 } from '@clerk/nextjs'
 
 export default function PlatformLayout({
-                                           children,
-                                       }: {
+   children,
+}: {
     children: React.ReactNode
 }) {
     return (

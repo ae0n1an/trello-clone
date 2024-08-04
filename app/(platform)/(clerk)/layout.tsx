@@ -1,6 +1,4 @@
-const ClerkLayout = ({
-                             children
-                         }: {
+const ClerkLayout = ({ children }: {
     children?: React.ReactNode
 }) => {
     return (
