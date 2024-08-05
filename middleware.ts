@@ -4,28 +4,40 @@ import { NextResponse } from "next/server";
 const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
-    if (isPublicRoute(req)) return; // if it's a public route, do nothing
-
     const { pathname } = new URL(req.url);
 
-    // if the user is not logged in navigate to sign in page
+    // If the route is public and the user is not authenticated, do nothing (allow access)
+    if (isPublicRoute(req) && !auth().userId) return;
+
+    // If the user is not logged in, redirect to the sign-in page
     if (!auth().userId) {
         const signInUrl = new URL('/sign-in', req.url);
         signInUrl.searchParams.set('returnBack', req.url);
         return NextResponse.redirect(signInUrl);
     }
 
-    let path = "/select-org";
+    // User is logged in
+    const selectedOrgId = auth().orgId;
 
-    // if the user is logged in and has an organization selected navigate that page
-    if (auth().orgId) {
-        path = `/organization/${auth().orgId}`;
+    // Determine where to redirect based on the selected organization
+    let redirectPath = null;
+
+    if (selectedOrgId) {
+        // Redirect to the organization's homepage if an organization is selected
+        redirectPath = `/organization/${selectedOrgId}`;
+    } else {
+        // Redirect to the organization selection page if no organization is selected
+        redirectPath = '/select-org';
     }
 
-    // if the user is logged in but has no org selected navigate to /select-org page
-    if (pathname !== path) {
-        const orgSelection = new URL(path, req.url);
-        return NextResponse.redirect(orgSelection);
+    // Redirect logged-in users away from public routes
+    if (isPublicRoute(req) && auth().userId) {
+        return NextResponse.redirect(new URL(redirectPath, req.url));
+    }
+
+    // Redirect to the correct path if the current pathname is not the desired one
+    if (pathname !== redirectPath) {
+        return NextResponse.redirect(new URL(redirectPath, req.url));
     }
 });
 
@@ -37,4 +49,5 @@ export const config = {
         '/(api|trpc)(.*)',
     ],
 };
+
 
