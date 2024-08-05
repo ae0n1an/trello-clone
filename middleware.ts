@@ -1,43 +1,36 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+const isPublicRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware((auth, req) => {
     const { pathname } = new URL(req.url);
 
-    // If the route is public and the user is not authenticated, do nothing (allow access)
-    if (isPublicRoute(req) && !auth().userId) return;
+    // if the user is logged in and on the landing page
+    if (auth().userId && isPublicRoute(req)) {
+        // get them select an org
+        let path = "/select-org";
 
-    // If the user is not logged in, redirect to the sign-in page
-    if (!auth().userId) {
+        // navigate to the selected org
+        if (auth().orgId) {
+            path = `/organization/${auth().orgId}`;
+        }
+
+        const orgSelection = new URL(path, req.url);
+        return NextResponse.redirect(orgSelection);
+    }
+
+    // If the user is not logged in and not on a public route
+    // redirect to sign in page then once logged in redirect to previous url
+    if (!auth().userId && !isPublicRoute(req) && req.nextUrl.pathname !== "/sign-in" && req.nextUrl.pathname !== "/sign-up") {
         const signInUrl = new URL('/sign-in', req.url);
         signInUrl.searchParams.set('returnBack', req.url);
         return NextResponse.redirect(signInUrl);
     }
 
-    // User is logged in
-    const selectedOrgId = auth().orgId;
-
-    // Determine where to redirect based on the selected organization
-    let redirectPath = null;
-
-    if (selectedOrgId) {
-        // Redirect to the organization's homepage if an organization is selected
-        redirectPath = `/organization/${selectedOrgId}`;
-    } else {
-        // Redirect to the organization selection page if no organization is selected
-        redirectPath = '/select-org';
-    }
-
-    // Redirect logged-in users away from public routes
-    if (isPublicRoute(req) && auth().userId) {
-        return NextResponse.redirect(new URL(redirectPath, req.url));
-    }
-
-    // Redirect to the correct path if the current pathname is not the desired one
-    if (pathname !== redirectPath) {
-        return NextResponse.redirect(new URL(redirectPath, req.url));
+    if (auth().userId && !auth().orgId && req.nextUrl.pathname !== "/select-org" ) {
+        const orgSelection = new URL("/select-org", req.url);
+        return NextResponse.redirect(orgSelection);
     }
 });
 
