@@ -1,6 +1,7 @@
-import {Button} from "@/components/ui/button";
-
 "use-client";
+
+import {Button} from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
@@ -112,3 +113,14 @@ export const NavItem = ({
         </AccordionItem>
     );
 };
+
+NavItem.Skeleton = function SkeletonNavItem() {
+    return (
+        <div className="flex items-center gap-x-2">
+            <div className="w-10 h-10 relative ">
+                <Skeleton className="h-full w-full absolute" />
+            </div>
+            <Skeleton className="h-10 w-full" />
+        </div>
+    )
+}
