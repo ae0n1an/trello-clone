@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 
 import { Plus } from "lucide-react";
 import {OrganizationSwitcher, UserButton} from "@clerk/nextjs";
+import {MobileSidebar} from "./mobile-sidebar";
 
 export const Navbar = () => {
     return (
         <nav className="fixed z-50 top-0 px-4 w-full h-14 border-b shadow-sm bg-white flex items-center">
+            <MobileSidebar />
             <div className="flex items-center gap-x-4">
                 <div className="hidden md:flex">
                     <Logo />
@@ -15,7 +17,7 @@ export const Navbar = () => {
                     Create
                 </Button>
                 {/* Mobile button */}
-                <Button size="sm" className="rounded-sm md:hidden">
+                <Button variant="primary" size="sm" className="rounded-sm md:hidden">
                     <Plus className="h-4 w-4" />
                 </Button>
             </div>
