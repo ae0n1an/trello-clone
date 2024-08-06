@@ -54,12 +54,12 @@ export const NavItem = ({
         {
             label: "Settings",
             icon: <Settings className="h-4 w-4 mr-2" />,
-            href: `/settings/${organization.id}/settings`
+            href: `/organization/${organization.id}/settings`
         },
         {
             label: "Billing",
             icon: <CreditCard className="h-4 w-4 mr-2" />,
-            href: `/settings/${organization.id}/billing`
+            href: `/organization/${organization.id}/billing`
         }
     ];
 
@@ -94,7 +94,7 @@ export const NavItem = ({
                 </div>
             </AccordionTrigger>
             <AccordionContent>
-                {routes.map((route, i) => (
+                {routes.map((route) => (
                   <Button
                     key={route.href}
                     size='sm'
