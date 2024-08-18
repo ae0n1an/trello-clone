@@ -46,7 +46,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
             data: {
                 title,
                 boardId,
-                order: 1
+                order: newOrder
             }
         })
     } catch (error) {
