@@ -7,6 +7,7 @@ import { useCardModal } from "@/hooks/use-card-modal";
 import { CardWithList } from "@/types";
 import { fetcher } from "@/lib/fetcher";
 import { Header } from "./header"
+import {Description} from "@/components/modals/card-modal/description";
 
 
 export const CardModal = () => {
@@ -25,10 +26,20 @@ export const CardModal = () => {
             onOpenChange={onClose}
         >
             <DialogContent>
-                {!cardData ?
-                    <Header.Skeleton />
+                {!cardData
+                    ? <Header.Skeleton />
                     : <Header data={cardData}/>
                 }
+                <div className="grid grid-cols-1 md:grid-cols-4 md:gap-4">
+                    <div className="col-span-3">
+                        <div className="w-full space-y-6">
+                            {!cardData
+                                ? <Description.Skeleton/>
+                                : <Description data={cardData}/>
+                            }
+                        </div>
+                    </div>
+                </div>
             </DialogContent>
         </Dialog>
     );
