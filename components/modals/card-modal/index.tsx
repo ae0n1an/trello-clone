@@ -8,6 +8,7 @@ import { CardWithList } from "@/types";
 import { fetcher } from "@/lib/fetcher";
 import { Header } from "./header"
 import {Description} from "@/components/modals/card-modal/description";
+import {Actions} from "@/components/modals/card-modal/actions";
 
 
 export const CardModal = () => {
@@ -39,6 +40,10 @@ export const CardModal = () => {
                             }
                         </div>
                     </div>
+                    {!cardData
+                        ? <Actions.Skeleton />
+                        : <Actions data={cardData}/>
+                    }
                 </div>
             </DialogContent>
         </Dialog>
